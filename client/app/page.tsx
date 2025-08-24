@@ -38,7 +38,7 @@ export default function Page() {
             </div>
           </div>
         </div>
-      </header>``
+      </header>
 
       <section className="relative container mx-auto px-4 py-8 md:py-12 bg-gradient-to-br from-white">
         <div className="mb-8 grid gap-4 md:mb-12 md:grid-cols-2 md:items-center">
