@@ -20,7 +20,10 @@
 //     return Response.json({ error: "Failed to connect to Flask server" }, { status: 502 })
 //   }
 // }
-const FLASK_BASE_URL = process.env.FLASK_BASE_URL || "http://localhost:5001";
+
+const FLASK_BASE_URL = "https://sharehub-1obp.onrender.com"; // Render backend
+
+// const FLASK_BASE_URL = process.env.FLASK_BASE_URL || "http://localhost:5001";
 
 export async function POST(request: Request) {
   try {

@@ -10,6 +10,8 @@ import { Download, File, RefreshCw, Trash2, FileText, ImageIcon, Video, Music, A
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 
+  const FLASK_BASE_URL = "https://sharehub-1obp.onrender.com"; // Change to your actual Flask server URL
+
 type FileInfo = {
   name: string
   size?: number
@@ -85,7 +87,7 @@ export function FileList() {
 
 const fetchFiles = async () => {
   try {
-    const response = await fetch("/api/files")
+    const response = await fetch(`${FLASK_BASE_URL}/api/files`)
     if (!response.ok) throw new Error("Failed to fetch files")
     const data = await response.json()
 
@@ -109,9 +111,11 @@ const fetchFiles = async () => {
   }
 }
 
+  // Define your Flask backend base URL here
+
   const downloadFile = async (filename: string) => {
     try {
-      const response = await fetch(`/api/download/${encodeURIComponent(filename)}`)
+      const response =  await fetch(`${FLASK_BASE_URL}/download/${encodeURIComponent(filename)}`);
       if (!response.ok) throw new Error("Download failed")
 
       const blob = await response.blob()
@@ -139,7 +143,7 @@ const fetchFiles = async () => {
 
   const deleteFile = async (filename: string) => {
     try {
-      const response = await fetch(`/api/delete/${encodeURIComponent(filename)}`, {
+      const response = await fetch(`${FLASK_BASE_URL}/api/delete/${encodeURIComponent(filename)}`, {
         method: "DELETE",
       })
       if (!response.ok) throw new Error("Delete failed")

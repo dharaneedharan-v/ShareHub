@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils"
 
 type UploadStatus = "idle" | "uploading" | "success" | "error"
 
+const FLASK_BASE_URL = "https://sharehub-1obp.onrender.com"; // Render backend
+
 type FileUpload = {
   file: File
   status: UploadStatus
@@ -28,7 +30,7 @@ export function FileUploader() {
     formData.append("file", file)
 
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch(`${FLASK_BASE_URL}/upload`, {
         method: "POST",
         body: formData,
       })

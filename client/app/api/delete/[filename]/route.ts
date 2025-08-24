@@ -38,8 +38,9 @@
 //   }
 // }
 
+const FLASK_BASE_URL = "https://sharehub-1obp.onrender.com"; // Render backend
 
-const FLASK_BASE_URL = process.env.FLASK_BASE_URL || "http://localhost:5001";
+// const FLASK_BASE_URL = process.env.FLASK_BASE_URL || "http://localhost:5001";
 import type { NextRequest } from "next/server";
 
 // For Next.js 15: params is now a Promise

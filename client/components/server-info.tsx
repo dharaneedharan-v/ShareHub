@@ -136,7 +136,9 @@ type ServerStatus = {
   qr?: string
 }
 
-const BACKEND_URL = "https://sharehub-1obp.onrender.com"  // Render backend
+// const BACKEND_URL = "https://sharehub-1obp.onrender.com"  // Render backend
+
+const FLASK_BASE_URL = "https://sharehub-1obp.onrender.com"; // Render backend
 
 export function ServerInfo() {
   const { toast } = useToast()
@@ -146,7 +148,7 @@ export function ServerInfo() {
 
   const fetchServerInfo = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/server-info`, { cache: "no-store" })
+      const res = await fetch(`${FLASK_BASE_URL}/api/server-info`, { cache: "no-store" })
       if (!res.ok) throw new Error()
       const data = await res.json()
       setServerInfo(data)
@@ -161,7 +163,7 @@ export function ServerInfo() {
     return () => clearInterval(id)
   }, [])
 
-  const serverUrl = serverInfo.url || BACKEND_URL
+  const serverUrl = serverInfo.url || FLASK_BASE_URL
 
   return (
     <Card className="border-slate-200/70 bg-white/70 backdrop-blur">
