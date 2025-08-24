@@ -216,11 +216,13 @@
 # ==================================================================
 from flask import Flask, request, send_from_directory, render_template_string, jsonify
 from flask_cors import CORS
-import os, socket, qrcode, base64
+import os, qrcode, base64
 from io import BytesIO
 
 app = Flask(__name__)
-CORS(app)  # allow all origins in dev
+
+# Allow requests from your deployed frontend
+CORS(app, origins=["https://share-hub-mauve.vercel.app"])
 
 SHARE_FOLDER = "shared_files"
 os.makedirs(SHARE_FOLDER, exist_ok=True)
@@ -266,29 +268,20 @@ def api_delete(filename):
     os.remove(p)
     return jsonify({"message": "File deleted"})
 
-def get_ip() -> str:
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(("10.255.255.255", 1))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = "127.0.0.1"
-    finally:
-        s.close()
-    return ip
+# Server info API (QR points to frontend)
+FRONTEND_URL = "https://share-hub-mauve.vercel.app"  # Your Vercel frontend URL
+
 @app.route("/api/server-info")
 def api_server_info():
-    ip = get_ip()
-    backend_port = 5001       # Flask backend port
-    frontend_port = 3000      # Next.js frontend port
-    protocol = "http"
+    backend_port = 5001
+    protocol = "https"
 
-    backend_url = f"{protocol}://{ip}:{backend_port}"
-    frontend_url = f"{protocol}://{ip}:{frontend_port}"  # <-- QR will point here
+    backend_url = f"{protocol}://{FRONTEND_URL}"  # backend URL for API calls
+    frontend_url = FRONTEND_URL  # QR code points here
 
-    # QR code points to frontend, not backend
+    # Generate QR code
     qr = qrcode.QRCode(box_size=8, border=1)
-    qr.add_data(frontend_url)  # <-- changed from backend_url
+    qr.add_data(frontend_url)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
     buf = BytesIO()
@@ -296,14 +289,10 @@ def api_server_info():
     qr_b64 = base64.b64encode(buf.getvalue()).decode()
 
     return jsonify({
-        "ip": ip,
-        "port": backend_port,
-        "protocol": protocol,
         "status": "online",
-        "url": backend_url,       # frontend code still uses backend URL for API calls
+        "url": backend_url,
         "qr": f"data:image/png;base64,{qr_b64}",
     })
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)  # listen on all LAN IPs
+    app.run(host="0.0.0.0", port=5001, debug=True)

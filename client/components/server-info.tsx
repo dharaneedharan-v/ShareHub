@@ -120,43 +120,38 @@
 
 
 
+
+
 "use client"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Wifi, Copy, ExternalLink } from "lucide-react"
+import { Wifi } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 type ServerStatus = {
-  ip: string
-  port: number
-  protocol: string
   status: "online" | "offline"
   url?: string
   qr?: string
 }
 
+const BACKEND_URL = "https://sharehub-1obp.onrender.com"  // Render backend
+
 export function ServerInfo() {
   const { toast } = useToast()
   const [serverInfo, setServerInfo] = useState<ServerStatus>({
-    ip: "localhost",
-    port: 5001,
-    protocol: "http",
     status: "offline",
   })
 
-  // Replace this with your LAN IP and port
-  const LAN_API = "http://10.10.71.1:5001/api/server-info"
-
   const fetchServerInfo = async () => {
     try {
-      const res = await fetch(LAN_API, { cache: "no-store" })
+      const res = await fetch(`${BACKEND_URL}/api/server-info`, { cache: "no-store" })
       if (!res.ok) throw new Error()
       const data = await res.json()
       setServerInfo(data)
     } catch {
-      setServerInfo((p) => ({ ...p, status: "offline" }))
+      setServerInfo({ status: "offline" })
     }
   }
 
@@ -166,7 +161,7 @@ export function ServerInfo() {
     return () => clearInterval(id)
   }, [])
 
-  const serverUrl = serverInfo.url || `${serverInfo.protocol}://${serverInfo.ip}:${serverInfo.port}`
+  const serverUrl = serverInfo.url || BACKEND_URL
 
   return (
     <Card className="border-slate-200/70 bg-white/70 backdrop-blur">
@@ -194,9 +189,12 @@ export function ServerInfo() {
           <Button variant="outline" size="sm" onClick={async () => {
             await navigator.clipboard.writeText(serverUrl)
             toast({ title: "URL copied", description: "Server URL copied to clipboard" })
-          }}>Copy URL</Button>
-
-          <Button variant="outline" size="sm" onClick={() => window.open(serverUrl, "_blank")}>Open</Button>
+          }}>
+            Copy URL
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => window.open(serverUrl, "_blank")}>
+            Open
+          </Button>
         </div>
 
         {serverInfo.qr && (
